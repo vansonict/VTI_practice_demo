@@ -1,6 +1,6 @@
 # Business Requirements Document — "Chat với tài liệu" (MVP)
 
-> **Chuẩn áp dụng:** IEEE 29148-2018 · **Phương pháp:** [BRD_Prompt_IEEE_standard.md](../BRD_Prompt_IEEE_standard.md) v1.0
+> **Chuẩn áp dụng:** IEEE 29148-2018 · **Phương pháp:** [BRD_Prompt_IEEE_standard.md](../../References/Analysis/BRD_Prompt_IEEE_standard.md) v1.0
 > **Quy ước ngôn ngữ chuẩn hóa:** **phải** = *shall* (bắt buộc) · **nên** = *should* (mong muốn) · **có thể** = *may* (được phép). Xem Glossary §13.
 
 ---
@@ -322,25 +322,27 @@ Priority theo MoSCoW: **Must** (thiếu thì MVP thất bại), **Should** (giá
 
 ## 11. Traceability
 
-| Business objective | Stakeholder need | Business requirement | Acceptance criteria | Downstream PRD/SRS ID |
+| Business objective | Stakeholder need | Business requirement | Acceptance criteria | Downstream PRD story · Use case |
 |---|---|---|---|---|
-| BO-001 | SN-004 | BR-001 | AC-001 | [TBD] |
-| BO-002 | SN-002 | BR-002 | AC-002 | [TBD] |
-| BO-002 | SN-003 | BR-003 | AC-003 | [TBD] |
-| BO-002 | SN-003 | BR-004 | AC-004 | [TBD] |
-| BO-002 | SN-004 | BR-005 | AC-005 | [TBD] |
-| BO-001 | SN-001 | BR-006 | AC-006 | [TBD] |
-| BO-002 | SN-003 | BR-007 | AC-007 | [TBD] |
-| BO-002 | SN-003 | BR-008 | AC-008 | [TBD] |
-| BO-002 | SN-003 | BR-009 | AC-009 | [TBD] |
-| BO-001 | SN-002 | BR-010 | AC-010 | [TBD] |
-| BO-001 | SN-001 | BR-011 | AC-011 | [TBD] |
-| BO-001 | SN-001 | BR-012 | AC-012 | [TBD] |
-| BO-001 | SN-001 | BR-013 | AC-013 | [TBD] |
-| — | SN-006, SN-007 | BR-014 | AC-014 | [TBD] |
-| — | SN-006 | BR-015 | AC-015 | [TBD] |
-| BO-003 | SN-005 | BR-016 | AC-016 | [TBD] |
-| BO-003 | SN-005 | BR-017 | AC-017 | [TBD] |
+| BO-001 | SN-004 | BR-001 | AC-001 | US-101 · UC-02 |
+| BO-002 | SN-002 | BR-002 | AC-002 | US-102 · UC-02, UC-03 |
+| BO-002 | SN-003 | BR-003 | AC-003 | US-103 · UC-03, UC-04 |
+| BO-002 | SN-003 | BR-004 | AC-004 | US-104 · UC-05 |
+| BO-002 | SN-004 | BR-005 | AC-005 | US-105 · UC-06 |
+| BO-001 | SN-001 | BR-006 | AC-006 | US-201 · UC-07 |
+| BO-002 | SN-003 | BR-007 | AC-007 | US-202 · UC-09 |
+| BO-002 | SN-003 | BR-008 | AC-008 | US-203 · UC-09 (US-205 · UC-12 hỗ trợ, chờ PQ-01) |
+| BO-002 | SN-003 | BR-009 | AC-009 | US-204 · UC-10 |
+| BO-001 | SN-002 | BR-010 | AC-010 | US-206 · UC-08 |
+| BO-001 | SN-001 | BR-011 | AC-011 | US-207 · UC-11 |
+| BO-001 | SN-001 | BR-012 | AC-012 | US-208 · UC-07 |
+| BO-001 | SN-001 | BR-013 | AC-013 | US-209 · UC-07 |
+| — | SN-006, SN-007 | BR-014 | AC-014 | US-301 · UC-01 |
+| — | SN-006 | BR-015 | AC-015 | US-302 (ràng buộc xuyên suốt; thiết kế: SDD D-04, D-08) |
+| BO-003 | SN-005 | BR-016 | AC-016 | US-401 · UC-13 |
+| BO-003 | SN-005 | BR-017 | AC-017 | US-402 · UC-14 |
+
+> Cột cuối được cập nhật 2026-10-21 từ [PRD.md](PRD.md) §6 và [UseCase_Specification.md](../02-analysis/UseCase_Specification.md) §3. Đây là thay đổi về traceability, không đổi nội dung requirement. Chưa có SRS riêng: PRD đóng vai trò đặc tả yêu cầu mức sản phẩm cho giai đoạn MVP.
 
 **Báo cáo coverage**
 
@@ -404,7 +406,7 @@ Ngày "Needed by" là đề xuất của BA, cần sponsor xác nhận.
 | Tên | Version | Vị trí | Ngày truy cập |
 |---|---|---|---|
 | ISO/IEC/IEEE 29148:2018 — Requirements engineering | 2018 | ISO/IEEE | 2026-10-19 |
-| BRD_Prompt_IEEE_standard.md (SRC-002) | 1.0 | `docs/BRD_Prompt_IEEE_standard.md` | 2026-10-19 |
+| BRD_Prompt_IEEE_standard.md (SRC-002) | 1.0 | `References/Analysis/BRD_Prompt_IEEE_standard.md` | 2026-10-19 |
 | Project brief từ quản lý (SRC-001) | — | Trích nguyên văn tại §0 | 2026-10-19 |
 
 ---

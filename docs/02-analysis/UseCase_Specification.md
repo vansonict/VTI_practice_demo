@@ -1,7 +1,7 @@
 # Use Case Specification — "Chat với tài liệu" (MVP)
 
 > **Chuẩn:** UML 2.0 · checklist [UseCase_Document_UML2.0_Checklist.xlsx](../../References/design/UseCase_Document_UML2.0_Checklist.xlsx)
-> **Diagram:** [UseCase_ChatVoiTaiLieu.drawio](UseCase_ChatVoiTaiLieu.drawio) · **Nguồn:** [BRD.md](../requirements/BRD.md), [PRD.md](../requirements/PRD.md)
+> **Diagram:** [UseCase_ChatVoiTaiLieu.drawio](UseCase_ChatVoiTaiLieu.drawio) · **Nguồn:** [BRD.md](../01-requirements/BRD.md), [PRD.md](../01-requirements/PRD.md)
 > Giá trị chưa chốt ghi `[TBD: OQ-xxx]` (OQ của BRD §12). Mô tả theo nghiệp vụ, không mô tả giao diện.
 
 ## 1. Document metadata

@@ -2,6 +2,7 @@
 
 > **Chuẩn áp dụng:** IEEE 29148-2018 · **Phương pháp:** [PRD_Prompt_IEEE_standard.md](../../References/Analysis/PRD_Prompt_IEEE_standard.md)
 > **Tài liệu nguồn:** [BRD.md](BRD.md) (BRD-CWD-001 v0.1) — PRD này là downstream của BRD; mọi story đều trace về BR/AC.
+> **Vai trò trong chuỗi tài liệu:** repo chưa có SRS riêng; trong giai đoạn MVP, PRD này đảm nhiệm vai trò đặc tả yêu cầu mức sản phẩm (functional, UX, release criteria). Yêu cầu phi chức năng chi tiết nằm ở PRD §5.1 và [SDD §2.3](../04-design/blueprint/SDD_Blueprint.md). Nếu đơn vị yêu cầu SRS theo IEEE 29148 đầy đủ thì cần tách một tài liệu riêng.
 > **Quy ước:** **phải** = *shall* · **nên** = *should* · **có thể** = *may*. Giá trị chưa chốt ghi `[TBD: OQ-xxx]` và dùng đúng ID Open Question của BRD (§12 BRD). Nội dung suy luận, chưa có nguồn xác nhận ghi `[Unverified]`.
 
 ---
@@ -125,6 +126,8 @@ flowchart LR
 ---
 
 ## 3. Functional Requirements & User Stories
+
+> **Bản dành cho Product Owner** (ngôn ngữ nghiệp vụ, kèm ảnh màn hình thiết kế và các quyết định cần chốt): [User_Stories.md](User_Stories.md). Mục này vẫn là nguồn chuẩn cho tiêu chí Given-When-Then; khi sửa story ở đây, cập nhật bản PO tương ứng.
 
 **Quy ước ưu tiên:** **P0** = Must-have cho launch (map BRD *Must*); **P1** = Should-have (map BRD *Should*); **P2** = Nice-to-have (map BRD §5.3 *Deferred* hoặc bổ sung mới). Story P2 **không** nằm trong phạm vi MVP, ghi để giữ roadmap.
 
