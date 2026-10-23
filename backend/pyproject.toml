@@ -1,0 +1,84 @@
+[project]
+name = "chat-voi-tai-lieu"
+version = "0.1.0"
+description = "Chat với tài liệu (MVP) — backend API và worker"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "python-multipart",
+    "pydantic-settings",
+    "sqlalchemy>=2",
+    "pypdf",
+    "numpy",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "httpx",
+    "ruff",
+    "mypy",
+    "import-linter",
+    "reportlab",
+    "pyyaml",
+    "types-pyyaml",
+    "pip-audit",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["app/migrations/*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["app/migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # cho phép ký tự tiếng Việt trong chuỗi và comment
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "S106"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["app"]
+exclude = ["app/migrations/"]
+
+[[tool.mypy.overrides]]
+module = ["pypdf.*"]
+ignore_missing_imports = true
+
+# Quy tắc phụ thuộc (SDD §3.3) — chạy bằng `lint-imports`
+[tool.importlinter]
+root_package = "app"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Module nghiệp vụ chỉ phụ thuộc port và shared (không adapter, API, DB, framework)"
+type = "forbidden"
+source_modules = ["app.modules"]
+forbidden_modules = ["app.adapters", "app.api", "app.db", "fastapi", "starlette", "uvicorn", "sqlalchemy", "pypdf"]
+
+[[tool.importlinter.contracts]]
+name = "Port không phụ thuộc module nghiệp vụ hay adapter"
+type = "forbidden"
+source_modules = ["app.ports"]
+forbidden_modules = ["app.modules", "app.adapters", "app.api", "app.db"]
+
+[[tool.importlinter.contracts]]
+name = "Adapter chỉ phụ thuộc port và shared"
+type = "forbidden"
+source_modules = ["app.adapters"]
+forbidden_modules = ["app.modules", "app.api", "app.db"]
