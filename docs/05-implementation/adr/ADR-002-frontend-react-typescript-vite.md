@@ -16,7 +16,7 @@
 | Server state | TanStack Query | Bộ nhớ đệm yêu cầu, polling khi có tài liệu `PROCESSING` |
 | Routing | React Router | 3 màn hình S01–S03 |
 | API client | Sinh kiểu từ `openapi.yaml` (openapi-typescript + openapi-fetch) | Frontend và backend dùng chung hợp đồng T0.2 |
-| Styling | CSS Modules + biến CSS từ token của bản mẫu | Không dùng framework CSS để giữ nguyên token đã duyệt |
+| Styling | Stylesheet toàn cục port nguyên từ bản mẫu (`src/styles/app.css`: token `:root` + class) | Cập nhật 2026-10-23: dùng lại 1:1 class đã duyệt thay vì CSS Modules; không dùng framework CSS |
 | Trình xem PDF | pdf.js (`pdfjs-dist`) | Mở đúng trang được trích dẫn |
 | Test component | Vitest + Testing Library | |
 | E2E | Playwright | Kèm kiểm accessibility bằng axe (T5.3) |

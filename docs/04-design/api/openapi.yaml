@@ -1,0 +1,174 @@
+openapi: 3.0.3
+info:
+  title: Chat với tài liệu API
+  version: 0.1.0-slice1
+  description: |
+    Hợp đồng API — **bản một phần** cho lát cắt đầu (Phase 6, slice 1): upload, danh sách tài liệu, hỏi đáp.
+    Bản đầy đủ 14 endpoint (đăng nhập, xóa, retry, file nguồn, feedback, thống kê, sự kiện) là việc của task T0.2.
+    Nguồn: SDD §3.6, SAD §2.4–2.5. `NOT_FOUND` trong hỏi đáp là kết quả hợp lệ (HTTP 200), không phải lỗi.
+servers:
+  - url: /
+paths:
+  /api/v1/documents:
+    post:
+      tags: [documents]
+      summary: Upload một hoặc nhiều PDF (UC-02, US-101)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [files]
+              properties:
+                files:
+                  type: array
+                  items: { type: string, format: binary }
+      responses:
+        '202':
+          description: Mỗi file một kết quả; file lỗi không ảnh hưởng file khác
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/UploadResult' }
+        '422': { $ref: '#/components/responses/Error' }
+    get:
+      tags: [documents]
+      summary: Danh sách tài liệu và trạng thái (UC-05, US-104)
+      responses:
+        '200':
+          description: Danh sách
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Document' }
+  /api/v1/conversations:
+    post:
+      tags: [qa]
+      summary: Bắt đầu cuộc trò chuyện mới
+      responses:
+        '201':
+          description: Đã tạo
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Conversation' }
+  /api/v1/conversations/{conversationId}/messages:
+    post:
+      tags: [qa]
+      summary: Gửi câu hỏi (UC-07…10, US-201…204)
+      parameters:
+        - { name: conversationId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text: { type: string }
+      responses:
+        '200':
+          description: ANSWER (kèm trích dẫn) hoặc NOT_FOUND (không có trích dẫn)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Message' }
+              examples:
+                answer:
+                  value: { id: m1, conversationId: c1, role: ASSISTANT, kind: ANSWER, text: Khách hàng thanh toán trong 30 ngày., citations: [{ documentId: d1, documentName: hop_dong_A.pdf, page: 7, documentDeleted: false }], createdAt: '2026-10-23T10:00:00Z' }
+                notFound:
+                  value: { id: m2, conversationId: c1, role: ASSISTANT, kind: NOT_FOUND, text: null, citations: [], createdAt: '2026-10-23T10:00:05Z' }
+        '404': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+        '422': { $ref: '#/components/responses/Error' }
+        '503': { $ref: '#/components/responses/Error' }
+        '504': { $ref: '#/components/responses/Error' }
+  /healthz:
+    get:
+      tags: [ops]
+      responses:
+        '200': { description: Sống }
+  /readyz:
+    get:
+      tags: [ops]
+      responses:
+        '200': { description: Sẵn sàng }
+        '503': { $ref: '#/components/responses/Error' }
+components:
+  responses:
+    Error:
+      description: Lỗi chuẩn
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, correlationId]
+          properties:
+            code:
+              type: string
+              description: >-
+                NOT_A_PDF, QUESTION_EMPTY, QUESTION_TOO_LONG, NO_READY_DOCUMENTS, NOT_FOUND_RESOURCE,
+                AI_TIMEOUT, AI_QUOTA, AI_UNAVAILABLE, VALIDATION_ERROR, NOT_READY, INTERNAL_ERROR
+            message: { type: string }
+            details: { type: object, nullable: true }
+            correlationId: { type: string }
+    UploadResult:
+      type: object
+      required: [fileName]
+      properties:
+        fileName: { type: string }
+        documentId: { type: string, nullable: true }
+        error:
+          type: object
+          nullable: true
+          properties:
+            code: { type: string }
+            message: { type: string }
+    Document:
+      type: object
+      required: [id, name, sizeBytes, status, retryable, uploadedBy, uploadedAt]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        sizeBytes: { type: integer }
+        pageCount: { type: integer, nullable: true }
+        status: { type: string, enum: [PROCESSING, READY, UNUSABLE] }
+        unusableReason: { type: string, nullable: true, enum: [scanned, password, corrupt, processing_failed] }
+        retryable: { type: boolean }
+        uploadedBy: { type: string }
+        uploadedAt: { type: string, format: date-time }
+    Conversation:
+      type: object
+      required: [id]
+      properties:
+        id: { type: string }
+    Citation:
+      type: object
+      required: [documentId, documentName, page, documentDeleted]
+      properties:
+        documentId: { type: string }
+        documentName: { type: string }
+        page: { type: integer }
+        documentDeleted: { type: boolean }
+    Message:
+      type: object
+      required: [id, conversationId, role, kind, citations, createdAt]
+      properties:
+        id: { type: string }
+        conversationId: { type: string }
+        role: { type: string, enum: [ASSISTANT] }
+        kind: { type: string, enum: [ANSWER, NOT_FOUND, ERROR] }
+        text: { type: string, nullable: true }
+        errorType: { type: string, nullable: true }
+        citations:
+          type: array
+          items: { $ref: '#/components/schemas/Citation' }
+        createdAt: { type: string, format: date-time }
