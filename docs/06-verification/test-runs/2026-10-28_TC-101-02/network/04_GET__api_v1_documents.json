@@ -1,0 +1,27 @@
+{
+  "at": "0:02.6",
+  "request": {
+    "method": "GET",
+    "url": "http://localhost:5173/api/v1/documents",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "x-correlation-id": "54d4c911918b47b8a75608826a32a9d4"
+    },
+    "body": [
+      {
+        "id": "4334b1c38d4443ff96cc1096e2f5d7dc",
+        "name": "bao_cao.pdf",
+        "sizeBytes": 1811,
+        "pageCount": 2,
+        "status": "READY",
+        "unusableReason": null,
+        "retryable": false,
+        "uploadedBy": "dev-user",
+        "uploadedAt": "2026-10-28T11:53:55.564942"
+      }
+    ]
+  }
+}

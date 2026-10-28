@@ -1,0 +1,21 @@
+{
+  "at": "0:00.6",
+  "request": {
+    "method": "POST",
+    "url": "http://localhost:5173/api/v1/documents",
+    "body": null
+  },
+  "response": {
+    "status": 202,
+    "headers": {
+      "x-correlation-id": "6a76b6f9f5e941e4a0155b4c5cf6ac09"
+    },
+    "body": [
+      {
+        "fileName": "bao_cao.pdf",
+        "documentId": "4334b1c38d4443ff96cc1096e2f5d7dc",
+        "error": null
+      }
+    ]
+  }
+}

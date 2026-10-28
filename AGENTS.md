@@ -9,6 +9,7 @@
 3. Hợp đồng API: [`docs/04-design/api/openapi.yaml`](docs/04-design/api/openapi.yaml) (thiết kế là nguồn chuẩn, code phải khớp)
 4. Giao diện: [`docs/04-design/UI_UX_design/`](docs/04-design/UI_UX_design/UI_UX_Design.md)
 5. Quyết định kỹ thuật: [`docs/05-implementation/adr/`](docs/05-implementation/adr/README.md); công việc: [`docs/05-implementation/tasks/`](docs/05-implementation/tasks/README.md)
+6. Kiểm thử: [`docs/06-verification/Master_Test_Plan.md`](docs/06-verification/Master_Test_Plan.md); ca kiểm thử (mỗi ca một file, kèm nhiệm vụ agent): [`docs/06-verification/test-cases/`](docs/06-verification/test-cases/README.md)
 
 Không tự đưa ra giá trị cho các mục `[TBD: OQ-xxx]`; dùng giá trị tạm trong cấu hình và ghi rõ là tạm.
 
@@ -41,6 +42,23 @@ npm run gen:api                              # sinh lại kiểu khi openapi.yam
 
 Trên Windows, đặt `PYTHONIOENCODING=utf-8` để in tiếng Việt ra terminal.
 
+## Thực thi ca kiểm thử trên giao diện (Phase 7)
+
+Quy trình đầy đủ: [`docs/06-verification/test-cases/README.md`](docs/06-verification/test-cases/README.md). Tóm tắt:
+
+```bash
+cd frontend && npx playwright-core install ffmpeg            # lần đầu: để ghi video
+cd backend && uv run python -m tests.make_test_data <dir>/td # sinh dữ liệu tổng hợp TD-* (không nhạy cảm)
+# chạy API + worker + frontend với CWD_DATABASE_URL / CWD_FILE_STORE_DIR trỏ vào thư mục tạm MỚI cho mỗi ca
+cd frontend && node e2e/run-<TC>.mjs                          # dùng helper e2e/evidence.mjs (Playwright + Chrome)
+```
+
+- Mỗi lần chạy một ca tạo `docs/06-verification/test-runs/<ngày>_<TC>/` gồm `report.md` (theo [`TEST_REPORT_TEMPLATE.md`](docs/06-verification/test-cases/TEST_REPORT_TEMPLATE.md)), ảnh sau mỗi bước, video, request/response, log. **Không có bằng chứng thì không ghi Pass.**
+- Chế độ lỗi của LLM giả lập: `CWD_LLM_FAKE_MODE` (`timeout`, `quota`, `unavailable`, `invalid_output`, `cite_unknown_evidence`).
+- Kết quả khác mong đợi → ghi Fail, không sửa code để test qua; nếu được yêu cầu sửa thì sửa ở commit riêng kèm test hồi quy (ví dụ BUG-001: `frontend/src/App.test.tsx`).
+- Agent không tự đổi "Kết quả mong đợi" của ca kiểm thử; ghi vào mục "Sai lệch" của báo cáo để người duyệt quyết định.
+- Video > 10 MB không commit vào repo.
+
 ## Kiến trúc và quy tắc phụ thuộc (kiểm tự động bằng `lint-imports`)
 
 ```
@@ -65,6 +83,7 @@ app/db        → SQLAlchemy: bảng + repository hiện thực Protocol của m
 - **Giao diện:** dùng class và token của bản mẫu (`frontend/src/styles/app.css`); chuỗi hiển thị đặt trong `src/i18n/vi.ts`; trạng thái luôn có icon + chữ.
 - Tham số `[Initial]` để trong cấu hình, không hard-code.
 - Sau mỗi story: cập nhật [`docs/05-implementation/traceability.md`](docs/05-implementation/traceability.md) và dòng Trạng thái của file task.
+- Khi thêm hoặc sửa ca kiểm thử: file `test-cases/TC-*.md` là chuẩn; cập nhật mục lục `Test_Case_Specification.md`, `Test_Cases.xlsx` và bảng đếm ở Master Test Plan Phụ lục A.
 
 ## Điều cấm
 

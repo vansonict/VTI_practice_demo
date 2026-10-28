@@ -436,6 +436,6 @@ Chưa có ngày (OQ-012); gắn theo mốc của Implementation Plan §4.
 | Xuyên suốt | 9 | 8 | 0 | 1 | 0 |
 | **Tổng** | **70** | **26** | **7** | **20** | **17** |
 
-Bước chi tiết (điều kiện trước, dữ liệu, các bước, kết quả mong đợi) của 33 ca đã chạy: [Test_Case_Specification.md](Test_Case_Specification.md) · bản thực thi [Test_Cases.xlsx](Test_Cases.xlsx).
+Bước chi tiết (điều kiện trước, dữ liệu, các bước, kết quả mong đợi, nhiệm vụ agent) — mỗi ca một file: [test-cases/](test-cases/README.md); mục lục: [Test_Case_Specification.md](Test_Case_Specification.md) · bản thực thi [Test_Cases.xlsx](Test_Cases.xlsx).
 
 Nghĩa: lát cắt 1 đã kiểm tự động phần **luồng và quy tắc** (trích dẫn từ evidence, ba cổng, lỗi AI ≠ not-found, tài liệu lỗi không bị trích). Phần **chất lượng, quyền truy cập, hiệu năng** chưa kiểm được: chờ task GĐ2–5 hoặc bị chặn bởi OQ-002, 004, 006, 007, 008, 009.

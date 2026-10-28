@@ -1,0 +1,65 @@
+{
+  "tcId": "TC-101-02",
+  "baseUrl": "http://localhost:5173",
+  "steps": [
+    {
+      "id": "U0",
+      "file": "screenshots/01_U0_kho-trong-truoc-khi-tai-len.png",
+      "videoAt": "0:00.5",
+      "note": ""
+    },
+    {
+      "id": "U1",
+      "file": "screenshots/02_U1_dang-xu-ly.png",
+      "videoAt": "0:00.7",
+      "note": ""
+    },
+    {
+      "id": "U2",
+      "file": "screenshots/03_U2_tu-chuyen-san-sang.png",
+      "videoAt": "0:03.1",
+      "note": ""
+    },
+    {
+      "id": "U3",
+      "file": "screenshots/04_U3_dem-tai-lieu.png",
+      "videoAt": "0:03.1",
+      "note": ""
+    },
+    {
+      "id": "S3",
+      "file": "screenshots/05_S3_api-documents-json.png",
+      "videoAt": "0:03.2",
+      "note": ""
+    }
+  ],
+  "observations": {
+    "u1_badge": "Đang xử lý",
+    "u1_ms": 218,
+    "u2_ms": 2584,
+    "u2_badge": "Sẵn sàng truy vấn",
+    "u2_meta": "Sẵn sàng truy vấn 2 trang",
+    "navigations_before_u3": 1,
+    "u3_count": "1 tài liệu · 1 sẵn sàng",
+    "step3_json": [
+      {
+        "id": "4334b1c38d4443ff96cc1096e2f5d7dc",
+        "name": "bao_cao.pdf",
+        "sizeBytes": 1811,
+        "pageCount": 2,
+        "status": "READY",
+        "unusableReason": null,
+        "retryable": false,
+        "uploadedBy": "dev-user",
+        "uploadedAt": "2026-10-28T11:53:55.564942"
+      }
+    ],
+    "network": [
+      "01_GET__api_v1_documents.json",
+      "02_POST__api_v1_documents.json",
+      "03_GET__api_v1_documents.json",
+      "04_GET__api_v1_documents.json",
+      "05_GET__api_v1_documents.json"
+    ]
+  }
+}
