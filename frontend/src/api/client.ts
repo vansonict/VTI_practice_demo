@@ -9,7 +9,11 @@ export type MessageDto = components["schemas"]["Message"];
 export type CitationDto = components["schemas"]["Citation"];
 export type ApiErrorBody = components["schemas"]["ErrorResponse"]["error"];
 
-export const api = createClient<paths>({ baseUrl: "" });
+// URL tuyệt đối theo origin hiện tại (dev: Vite proxy /api); cần cho fetch trong môi trường test
+export const api = createClient<paths>({
+  baseUrl: globalThis.location?.origin ?? "",
+  fetch: (request) => globalThis.fetch(request), // đọc fetch lúc gọi (test có thể thay thế)
+});
 
 export class ApiError extends Error {
   constructor(
