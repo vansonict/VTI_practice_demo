@@ -42,3 +42,4 @@
 |---|---|---|
 | 2026-10-23 | 1 — Walking skeleton | SQLite tạm (ADR-006), adapter AI giả lập; backend 33 test, độ phủ 95%; frontend 11 test; E2E thủ công qua trình duyệt |
 | 2026-10-23 | Phase 7 — Kiểm chứng lát cắt 1 | Master Test Plan (70 ca: 26 đạt, 7 một phần, 20 chờ task, 17 bị chặn); L0 xanh tại `163a7dd`; L1: 0 Blocker/Critical, 3 Medium (TSR-CWD-001 §5) |
+| 2026-10-28 | Kiểm thử | Tách 70 ca kiểm thử thành từng file (`docs/06-verification/test-cases/`), thêm nhiệm vụ agent + helper thu bằng chứng `frontend/e2e/evidence.mjs`. Khi chạy thử phát hiện và sửa **BUG-001**: upload ngay khi trang vừa mở (kho trống) thì tài liệu không hiện và không polling (vi phạm AC-101.1/101.2 trên UI); test hồi quy `frontend/src/App.test.tsx` |

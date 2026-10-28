@@ -1,0 +1,15 @@
+{
+  "at": "0:00.2",
+  "request": {
+    "method": "GET",
+    "url": "http://localhost:5173/api/v1/documents",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "x-correlation-id": "4e4b60cc5e4e4cf2a6966850f6d3d2ae"
+    },
+    "body": []
+  }
+}

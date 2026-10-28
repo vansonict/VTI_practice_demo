@@ -1,0 +1,2 @@
+2026-10-28 18:53:37,889 INFO __main__ worker_started
+2026-10-28 18:53:56,134 INFO app.modules.ingestion.service ingestion_job_finished

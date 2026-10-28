@@ -15,9 +15,13 @@ export function DocumentPanel({ documents }: { documents: DocumentDto[] }) {
 
   const upload = useMutation({
     mutationFn: uploadDocuments,
-    onSuccess: (results) => {
+    onSuccess: async (results) => {
       setRejected(results.filter((r) => r.error).map((r) => `${r.fileName}: ${r.error?.message}`));
-      void queryClient.invalidateQueries({ queryKey: ["documents"] });
+      // Hủy request danh sách đang chạy (có thể bắt đầu trước khi upload xong, trả về dữ liệu cũ) rồi mới làm mới.
+      // Nếu không, TanStack Query gộp lần làm mới vào request cũ khi cache chưa có dữ liệu → tài liệu vừa tải
+      // không hiện và polling không bật (lỗi phát hiện khi chạy TC-101-02 trên giao diện, 2026-10-28).
+      await queryClient.cancelQueries({ queryKey: ["documents"] });
+      await queryClient.invalidateQueries({ queryKey: ["documents"] });
     },
     onError: (e: Error) => setRejected([e.message]),
   });
