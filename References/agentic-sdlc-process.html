@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    body { font-size: 18px; line-height: 1.55; }
+    .slide { display: none; }
+    .slide.active { display: block; }
+    .phase-badge {
+      display: inline-block;
+      padding: 3px 14px;
+      border-radius: 9999px;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .artifact-tag {
+      display: inline-block;
+      padding: 2px 12px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-family: monospace;
+      margin: 3px;
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .flow-arrow {
+      color: var(--muted-foreground);
+      font-size: 26px;
+      margin: 0 8px;
+    }
+    .nav-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .nav-dot.active-dot {
+      transform: scale(1.4);
+    }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-0 m-0">
+
+  <!-- ========== SLIDE 0: TITLE ========== -->
+  <div class="slide active" id="s0">
+    <div class="flex flex-col items-center justify-center min-h-[720px] p-10 text-center"
+         style="background: linear-gradient(135deg, #006BB9 0%, #2A6099 50%, #3D5A99 100%);">
+      <div class="text-white/80 text-xl uppercase tracking-widest mb-4">Quy trình thực hành</div>
+      <h1 class="text-6xl font-bold text-white mb-5">Agentic SDLC</h1>
+      <p class="text-white/90 text-3xl max-w-3xl mb-8">Từng Phase → Từng Bước → Từng Tài liệu</p>
+      <div class="flex items-center gap-4 text-white/70 text-2xl">
+        <span>Spec</span><span class="flow-arrow text-white/50">→</span>
+        <span>Generate</span><span class="flow-arrow text-white/50">→</span>
+        <span>Verify</span><span class="flow-arrow text-white/50">→</span>
+        <span>Refine</span>
+      </div>
+      <div class="mt-10 text-white/60 text-lg">
+        Tham khảo: VTI Agentic AI for SDLC & SDLC-Prompt-Checklist<br>
+        <a href="https://github.com/minhtrantrong/SDLC-Prompt-Checklist" target="_blank"
+           class="underline text-white/80 hover:text-white">github.com/minhtrantrong/SDLC-Prompt-Checklist</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 1: OVERVIEW ========== -->
+  <div class="slide" id="s1">
+    <div class="p-8">
+      <h2 class="text-3xl font-bold mb-2" style="color: #006BB9;">Tổng quan Agentic SDLC</h2>
+      <p class="text-[var(--muted-foreground)] text-xl mb-5">Vòng lặp: mỗi phase commit artifact → phase sau đọc artifact đó</p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-6 text-lg">
+        <div class="px-4 py-2 rounded-lg font-semibold text-white" style="background:#006BB9;">1. Intake</div>
+        <span class="flow-arrow">→</span>
+        <div class="px-4 py-2 rounded-lg font-semibold text-white" style="background:#2A6099;">2. Requirements</div>
+        <span class="flow-arrow">→</span>
+        <div class="px-4 py-2 rounded-lg font-semibold text-white" style="background:#3D5A99;">3. Analysis</div>
+        <span class="flow-arrow">→</span>
+        <div class="px-4 py-2 rounded-lg font-semibold text-white" style="background:#1F6B3E;">4. Design</div>
+        <span class="flow-arrow">→</span>
+        <div class="px-4 py-2 rounded-lg font-semibold text-white" style="background:#8B5E00;">5. Planning</div>
+        <span class="flow-arrow">→</span>
+        <div class="px-4 py-2 rounded-lg font-semibold text-white" style="background:#7B2D8E;">6. Build</div>
+        <span class="flow-arrow">→</span>
+        <div class="px-4 py-2 rounded-lg font-semibold text-white" style="background:#C0392B;">7. Verify</div>
+        <span class="flow-arrow">→</span>
+        <div class="px-4 py-2 rounded-lg font-semibold text-white" style="background:#2C3E50;">8. Review</div>
+        <span class="flow-arrow">→</span>
+        <div class="px-4 py-2 rounded-lg font-semibold text-white" style="background:#16A085;">9. Release</div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 mb-5">
+        <h3 class="font-semibold text-xl mb-3">🔄 Vòng lặp cốt lõi cho MỌI đơn vị công việc</h3>
+        <div class="flex items-center justify-center gap-3 text-xl font-medium">
+          <div class="px-4 py-2 rounded-lg bg-blue-100 text-blue-800">SPECIFY</div>
+          <span class="flow-arrow">→</span>
+          <div class="px-4 py-2 rounded-lg bg-green-100 text-green-800">GENERATE</div>
+          <span class="flow-arrow">→</span>
+          <div class="px-4 py-2 rounded-lg bg-orange-100 text-orange-800">VERIFY</div>
+          <span class="flow-arrow">→</span>
+          <div class="px-4 py-2 rounded-lg bg-purple-100 text-purple-800">REFINE</div>
+          <span class="flow-arrow">↩</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 text-lg">
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <div class="font-semibold text-xl mb-2">🤖 Agent làm</div>
+          <ul class="text-[var(--muted-foreground)] text-lg space-y-1">
+            <li>• Sinh bản nháp tài liệu theo template</li>
+            <li>• Audit theo rubric/checklist</li>
+            <li>• Vẽ sơ đồ, sinh code, chạy test</li>
+            <li>• Tìm mâu thuẫn, đề xuất sửa</li>
+          </ul>
+        </div>
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <div class="font-semibold text-xl mb-2">👤 Con người làm</div>
+          <ul class="text-[var(--muted-foreground)] text-lg space-y-1">
+            <li>• Phỏng vấn stakeholder</li>
+            <li>• Phê duyệt, sign-off</li>
+            <li>• Quyết định trade-off, ưu tiên</li>
+            <li>• Review & chịu trách nhiệm</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 2: PHASE 1 - INTAKE ========== -->
+  <div class="slide" id="s2">
+    <div class="p-8">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="phase-badge text-white" style="background:#006BB9;">PHASE 1</span>
+        <h2 class="text-3xl font-bold">Intake — Tiếp nhận ý tưởng</h2>
+      </div>
+      <p class="text-[var(--muted-foreground)] text-xl mb-5">Biến ý tưởng/yêu cầu thô thành work item có chủ sở hữu</p>
+
+      <div class="space-y-3 mb-5">
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#006BB9;">1</span>
+          <div>
+            <div class="font-semibold text-xl">Thu thập ý tưởng & bối cảnh</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Agent đọc ticket/email/ghi chú, tổng hợp vấn đề, tìm prior art. Con người phỏng vấn stakeholder.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#006BB9;">2</span>
+          <div>
+            <div class="font-semibold text-xl">Soạn intent.md</div>
+            <div class="text-lg text-[var(--muted-foreground)]">7 mục: Problem, Proposed outcome, Affected users, Constraints, Success measures, Out of scope, Open questions.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#006BB9;">3</span>
+          <div>
+            <div class="font-semibold text-xl">Tạo tài liệu nền</div>
+            <div class="text-lg text-[var(--muted-foreground)]">glossary.md (thuật ngữ), stakeholders.md (ai, vai trò, concern), sources.md (nguồn dữ liệu)</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#006BB9;">4</span>
+          <div>
+            <div class="font-semibold text-xl">Xác định risk tier & phê duyệt intent</div>
+            <div class="text-lg text-[var(--muted-foreground)]">PO duyệt intent. Gán owner, acceptance criteria, risk tier (Low/Medium/High).</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+        <div class="font-semibold text-xl mb-2">📄 Tài liệu tạo ra</div>
+        <div class="flex flex-wrap gap-1">
+          <span class="artifact-tag bg-blue-100 text-blue-800">intent.md</span>
+          <span class="artifact-tag bg-blue-100 text-blue-800">glossary.md</span>
+          <span class="artifact-tag bg-blue-100 text-blue-800">stakeholders.md</span>
+          <span class="artifact-tag bg-blue-100 text-blue-800">sources.md</span>
+        </div>
+        <div class="text-lg text-[var(--muted-foreground)] mt-2">📁 Lưu tại: <code>docs/01-intake/</code> hoặc work item tracker</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 3: PHASE 2 - REQUIREMENTS ========== -->
+  <div class="slide" id="s3">
+    <div class="p-8">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="phase-badge text-white" style="background:#2A6099;">PHASE 2</span>
+        <h2 class="text-3xl font-bold">Requirements — Thu thập yêu cầu nghiệp vụ</h2>
+      </div>
+      <p class="text-[var(--muted-foreground)] text-xl mb-5">Tạo BRD — tài liệu yêu cầu nghiệp vụ chuẩn ISO/IEC/IEEE 29148</p>
+
+      <div class="space-y-3 mb-5">
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#2A6099;">1</span>
+          <div>
+            <div class="font-semibold text-xl">Elicitation — Khám phá nhu cầu</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Agent đóng vai AI-as-client đặt câu hỏi. Con người phỏng vấn stakeholder, quan sát hiện trường.
+              <br>Prompt: <code>BRD_Elicitation_Prompt_IEEE_standard.md</code></div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#2A6099;">2</span>
+          <div>
+            <div class="font-semibold text-xl">Soạn BRD theo chuẩn</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Agent sinh BRD từ template chuẩn. Bao gồm: mục tiêu kinh doanh, stakeholders, yêu cầu nghiệp vụ, ràng buộc.
+              <br>Prompt: <code>BRD_Prompt_IEEE_standard.md</code></div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#2A6099;">3</span>
+          <div>
+            <div class="font-semibold text-xl">Kiểm tra chất lượng BRD</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Đối chiếu với checklist IEEE 29148. Kiểm 7 thuộc tính: Correct, Unambiguous, Complete, Consistent, Verifiable, Traceable, Prioritised.
+              <br>Checklist: <code>BRD_IEEE_29148_Checklist.xlsx</code></div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#2A6099;">4</span>
+          <div>
+            <div class="font-semibold text-xl">PM/PO Review & Approve</div>
+            <div class="text-lg text-[var(--muted-foreground)]">PM/PO xác nhận nội dung. Baseline BRD trong git.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+        <div class="font-semibold text-xl mb-2">📄 Tài liệu tạo ra</div>
+        <div class="flex flex-wrap gap-1">
+          <span class="artifact-tag bg-indigo-100 text-indigo-800">BRD.md</span>
+          <span class="artifact-tag bg-indigo-100 text-indigo-800">interviews/*.md</span>
+        </div>
+        <div class="text-lg text-[var(--muted-foreground)] mt-2">📁 Lưu tại: <code>docs/02-requirements/</code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 4: PHASE 3 - ANALYSIS ========== -->
+  <div class="slide" id="s4">
+    <div class="p-8">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="phase-badge text-white" style="background:#3D5A99;">PHASE 3</span>
+        <h2 class="text-3xl font-bold">Analysis — Phân tích yêu cầu</h2>
+      </div>
+      <p class="text-[var(--muted-foreground)] text-xl mb-5">Từ BRD → SRS/PRD + User Stories — yêu cầu cụ thể, đo được, kiểm thử được</p>
+
+      <div class="space-y-3 mb-5">
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#3D5A99;">1</span>
+          <div>
+            <div class="font-semibold text-xl">Phân tích BRD → Đặc tả yêu cầu</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Agent phân tích BRD, tách FR/NFR, gán mã ID, kiểm mâu thuẫn. Con người xác nhận ý nghĩa nghiệp vụ.
+              <br>Prompt: <code>PRD_Prompt_IEEE_standard.md</code></div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#3D5A99;">2</span>
+          <div>
+            <div class="font-semibold text-xl">Viết User Stories + Acceptance Criteria</div>
+            <div class="text-lg text-[var(--muted-foreground)]">"As a [role], I want [capability], so that [benefit]". Mỗi story gắn FR-ID, có AC rõ ràng.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#3D5A99;">3</span>
+          <div>
+            <div class="font-semibold text-xl">Audit chất lượng yêu cầu</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Đối chiếu PRD checklist IEEE 29148. Mỗi yêu cầu phải: cần thiết, đơn nghĩa, đầy đủ, nhất quán, kiểm chứng được, truy vết được.
+              <br>Checklist: <code>PRD_IEEE_29148_Checklist.xlsx</code></div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#3D5A99;">4</span>
+          <div>
+            <div class="font-semibold text-xl">Traceability + Review + Baseline</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Lập ma trận truy vết BRD→SRS→US. PM/PO + Tech Lead review. Baseline trong git.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+        <div class="font-semibold text-xl mb-2">📄 Tài liệu tạo ra</div>
+        <div class="flex flex-wrap gap-1">
+          <span class="artifact-tag bg-violet-100 text-violet-800">SRS.md / PRD.md</span>
+          <span class="artifact-tag bg-violet-100 text-violet-800">USER_STORIES.md</span>
+          <span class="artifact-tag bg-violet-100 text-violet-800">traceability.md</span>
+        </div>
+        <div class="text-lg text-[var(--muted-foreground)] mt-2">📁 Lưu tại: <code>docs/03-analysis/</code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 5: PHASE 4 - DESIGN ========== -->
+  <div class="slide" id="s5">
+    <div class="p-8">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="phase-badge text-white" style="background:#1F6B3E;">PHASE 4</span>
+        <h2 class="text-3xl font-bold">Design — Thiết kế kiến trúc & mô hình</h2>
+      </div>
+      <p class="text-[var(--muted-foreground)] text-xl mb-5">SAD + Blueprint + Sơ đồ 4+1/C4 + ADR + UI/UX + Interface contracts</p>
+
+      <div class="space-y-3 mb-5">
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#1F6B3E;">1</span>
+          <div>
+            <div class="font-semibold text-xl">SAD — Kiến trúc hệ thống (arc42 / IEEE 1016)</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Agent sinh SAD theo 12 mục arc42. Ghi building block CMP-xx, quyết định kiến trúc, quality attributes.
+              <br>Prompt: <code>SAD_Prompt_IEEE_standard.md</code> · Checklist: <code>SAD_IEEE_1016_Checklist.xlsx</code></div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#1F6B3E;">2</span>
+          <div>
+            <div class="font-semibold text-xl">Mô hình hóa 4+1 Views</div>
+            <div class="text-lg text-[var(--muted-foreground)]">
+              <b>Logical</b> (class) · <b>Process</b> (sequence/activity) · <b>Development</b> (component) · <b>Physical</b> (deployment) · <b>Scenarios</b> (use case)
+              <br>Mỗi view có prompt + checklist UML 2.0 riêng</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#1F6B3E;">3</span>
+          <div>
+            <div class="font-semibold text-xl">ADR + Blueprint + Interface + Data Model</div>
+            <div class="text-lg text-[var(--muted-foreground)]">≥3 ADR cho quyết định khó đảo ngược. Blueprint (IEEE 1016). OpenAPI contracts. Database design (SQL/NoSQL/Vector).
+              <br>Prompt: <code>bluePrint_design_prompt.md</code>, <code>apiDesign_prompt.md</code>, <code>databaseDesign_*.md</code></div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#1F6B3E;">4</span>
+          <div>
+            <div class="font-semibold text-xl">UI/UX Design + Cross-view Audit + Review</div>
+            <div class="text-lg text-[var(--muted-foreground)]">UI/UX design với personas, WCAG 2.1 AA. Chạy audit nhất quán giữa các view. Tech Lead + Architect review.
+              <br>Prompt: <code>UI-UX-Design_prompt.md</code></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+        <div class="font-semibold text-xl mb-2">📄 Tài liệu tạo ra</div>
+        <div class="flex flex-wrap gap-1">
+          <span class="artifact-tag bg-emerald-100 text-emerald-800">SAD.md</span>
+          <span class="artifact-tag bg-emerald-100 text-emerald-800">ADR-*.md</span>
+          <span class="artifact-tag bg-emerald-100 text-emerald-800">blueprint.md</span>
+          <span class="artifact-tag bg-emerald-100 text-emerald-800">diagrams/*.drawio</span>
+          <span class="artifact-tag bg-emerald-100 text-emerald-800">openapi.md</span>
+          <span class="artifact-tag bg-emerald-100 text-emerald-800">data/model.md</span>
+          <span class="artifact-tag bg-emerald-100 text-emerald-800">UI_UX_design/</span>
+          <span class="artifact-tag bg-emerald-100 text-emerald-800">elements.yaml</span>
+        </div>
+        <div class="text-lg text-[var(--muted-foreground)] mt-2">📁 Lưu tại: <code>docs/04-design/</code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 6: PHASE 5 - PLANNING ========== -->
+  <div class="slide" id="s6">
+    <div class="p-8">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="phase-badge text-white" style="background:#8B5E00;">PHASE 5</span>
+        <h2 class="text-3xl font-bold">Planning — Lập kế hoạch thực thi</h2>
+      </div>
+      <p class="text-[var(--muted-foreground)] text-xl mb-5">Từ SAD + User Stories → Plan chia nhỏ thành vertical slices build được</p>
+
+      <div class="space-y-3 mb-5">
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#8B5E00;">1</span>
+          <div>
+            <div class="font-semibold text-xl">Phân rã công việc (Work Breakdown)</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Agent phân tích SAD + USER_STORIES → chia thành task nhỏ. Mỗi task đủ nhỏ cho agent xử lý trong vài vòng lặp.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#8B5E00;">2</span>
+          <div>
+            <div class="font-semibold text-xl">Xác định thứ tự, phụ thuộc, ước lượng</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Mỗi task có: owner, FR-ID, dependencies, estimate, file chạm, rủi ro. Ưu tiên vertical slice.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#8B5E00;">3</span>
+          <div>
+            <div class="font-semibold text-xl">Ghi nhận quyết định & rủi ro</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Record decisions with rationale. Ghi open risks, unknowns, gaps — mỗi item có owner.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#8B5E00;">4</span>
+          <div>
+            <div class="font-semibold text-xl">PM/PO + Tech Lead Review</div>
+            <div class="text-lg text-[var(--muted-foreground)]">PM/PO duyệt scope & sequencing. Tech Lead duyệt technical feasibility.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+        <div class="font-semibold text-xl mb-2">📄 Tài liệu tạo ra</div>
+        <div class="flex flex-wrap gap-1">
+          <span class="artifact-tag bg-amber-100 text-amber-800">PLAN.md</span>
+          <span class="artifact-tag bg-amber-100 text-amber-800">tasks/*.md</span>
+        </div>
+        <div class="text-lg text-[var(--muted-foreground)] mt-2">📁 Lưu tại: <code>docs/05-implement/</code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 7: PHASE 6 - IMPLEMENTATION ========== -->
+  <div class="slide" id="s7">
+    <div class="p-8">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="phase-badge text-white" style="background:#7B2D8E;">PHASE 6</span>
+        <h2 class="text-3xl font-bold">Implementation — Phát triển mã nguồn</h2>
+      </div>
+      <p class="text-[var(--muted-foreground)] text-xl mb-5">Mỗi User Story = một vòng SPECIFY → GENERATE → VERIFY → REFINE</p>
+
+      <div class="space-y-3 mb-5">
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#7B2D8E;">1</span>
+          <div>
+            <div class="font-semibold text-xl">SPECIFY — Đọc US + AC, viết test trước</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Đọc docs/ như nguồn sự thật. AC → test case (TDD). Cấu hình AGENTS.md: stack, conventions, điều cấm.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#7B2D8E;">2</span>
+          <div>
+            <div class="font-semibold text-xl">GENERATE — Code theo vertical slice</div>
+            <div class="text-lg text-[var(--muted-foreground)]">DB → API → UI → test, mỗi slice chạy được. Commit nhỏ, Conventional Commits, gắn US/FR trong message.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#7B2D8E;">3</span>
+          <div>
+            <div class="font-semibold text-xl">VERIFY — Lint · test · CI</div>
+            <div class="text-lg text-[var(--muted-foreground)]">L0: format, lint, type check, unit test, secret scan, dependency scan, build. Tất cả deterministic.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <span class="step-num text-white" style="background:#7B2D8E;">4</span>
+          <div>
+            <div class="font-semibold text-xl">REFINE — Sửa nhỏ nhất theo phát hiện</div>
+            <div class="text-lg text-[var(--muted-foreground)]">Lặp lại cho đến khi mọi AC xanh. Cập nhật traceability.md: US ↔ FR ↔ code ↔ test.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+        <div class="font-semibold text-xl mb-2">📄 Tài liệu tạo ra</div>
+        <div class="flex flex-wrap gap-1">
+          <span class="artifact-tag bg-purple-100 text-purple-800">Source code (app/)</span>
+          <span class="artifact-tag bg-purple-100 text-purple-800">Tests (tests/)</span>
+          <span class="artifact-tag bg-purple-100 text-purple-800">AGENTS.md</span>
+          <span class="artifact-tag bg-purple-100 text-purple-800">traceability.md ↻</span>
+          <span class="artifact-tag bg-purple-100 text-purple-800">ADR mới (nếu có)</span>
+        </div>
+        <div class="text-lg text-[var(--muted-foreground)] mt-2">📁 Lưu tại: <code>app/</code>, <code>tests/</code>, root repo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 8: PHASE 7-8 - VERIFY & REVIEW ========== -->
+  <div class="slide" id="s8">
+    <div class="p-8">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="phase-badge text-white" style="background:#C0392B;">PHASE 7-8</span>
+        <h2 class="text-3xl font-bold">Verify & Review — Kiểm chứng & Phê duyệt</h2>
+      </div>
+      <p class="text-[var(--muted-foreground)] text-xl mb-5">Tháp đảm bảo chất lượng: L0 (máy) → L1 (agent) → L2 (người) → L3-L4 (rủi ro cao)</p>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div class="space-y-2">
+          <h3 class="font-semibold text-xl" style="color:#C0392B;">🔍 Verification (Phase 7)</h3>
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4 text-lg space-y-2">
+            <div><b>L0 — CI tự động:</b> lint, type, test, coverage ≥70%, secret scan, build &#60;10 min</div>
+            <div><b>L1 — Agent review:</b> review theo rubric, trích dẫn dòng lỗi, chạy trên diff, không có quyền merge</div>
+            <div><b>Test plan:</b> dùng <code>testPlan_prompt.md</code> + <code>Test_Plan_IEEE_829_Checklist.xlsx</code></div>
+            <div><b>Code review checklist:</b> <code>Code_Review_IEEE_1028_Checklist.xlsx</code></div>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h3 class="font-semibold text-xl" style="color:#2C3E50;">✅ Code Review (Phase 8)</h3>
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4 text-lg space-y-2">
+            <div><b>L2 — Human review:</b> 1 approver ≠ author. PR ≤ 400 dòng. Đọc diff, không đọc tóm tắt</div>
+            <div><b>Rubric 7 tiêu chí:</b> Đúng AC, Test, Thiết kế, An toàn, Hiệu năng, Dễ đọc, Truy vết (≥10/14 mới merge)</div>
+            <div><b>L3-L4:</b> Inspection cho diff rủi ro cao (auth, PII, tiền). Demo validation với stakeholder</div>
+            <div><b>Agent KHÔNG được:</b> approve, merge hoặc deploy</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+        <div class="font-semibold text-xl mb-2">📄 Tài liệu tạo ra</div>
+        <div class="flex flex-wrap gap-1">
+          <span class="artifact-tag bg-red-100 text-red-800">test-report</span>
+          <span class="artifact-tag bg-red-100 text-red-800">CI log</span>
+          <span class="artifact-tag bg-red-100 text-red-800">review-record.md</span>
+          <span class="artifact-tag bg-red-100 text-red-800">PR + approval</span>
+          <span class="artifact-tag bg-red-100 text-red-800">coverage report</span>
+        </div>
+        <div class="text-lg text-[var(--muted-foreground)] mt-2">📁 Lưu tại: PR/work item + <code>docs/07-verification/</code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 9: PHASE 9-10-11 ========== -->
+  <div class="slide" id="s9">
+    <div class="p-8">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="phase-badge text-white" style="background:#16A085;">PHASE 9-11</span>
+        <h2 class="text-3xl font-bold">Release · Operate · Decommission</h2>
+      </div>
+      <p class="text-[var(--muted-foreground)] text-xl mb-5">Deploy có kiểm soát, vận hành có giám sát, nghỉ hưu có kế hoạch</p>
+
+      <div class="grid grid-cols-3 gap-4 mb-5">
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <h3 class="font-semibold text-xl mb-3" style="color:#16A085;">🚀 Release (Phase 9)</h3>
+          <ul class="text-lg text-[var(--muted-foreground)] space-y-1.5">
+            <li>• Confirm artifact = reviewed commit</li>
+            <li>• Release notes, feature flags</li>
+            <li>• Staged rollout / canary</li>
+            <li>• <b>Human</b> authorize deploy</li>
+            <li>• Monitor health indicators</li>
+            <li>• Rollback plan sẵn sàng</li>
+          </ul>
+        </div>
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <h3 class="font-semibold text-xl mb-3" style="color:#2C3E50;">⚙️ Operate (Phase 10)</h3>
+          <ul class="text-lg text-[var(--muted-foreground)] space-y-1.5">
+            <li>• Agent giám sát telemetry, logs</li>
+            <li>• Incident → control band → intent.md mới</li>
+            <li>• Agent KHÔNG thay đổi production</li>
+            <li>• Post-incident review</li>
+            <li>• Feed lessons → tests, docs, SOP</li>
+          </ul>
+        </div>
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <h3 class="font-semibold text-xl mb-3" style="color:#7f8c8d;">🏚 Decommission (Phase 11)</h3>
+          <ul class="text-lg text-[var(--muted-foreground)] space-y-1.5">
+            <li>• Agent inventory dependents, data</li>
+            <li>• Verify data retention/deletion</li>
+            <li>• Revoke access & credentials</li>
+            <li>• Update diagrams & docs</li>
+            <li>• Owner sign-off retirement</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+        <div class="font-semibold text-xl mb-2">📄 Tài liệu tạo ra</div>
+        <div class="flex flex-wrap gap-1">
+          <span class="artifact-tag bg-teal-100 text-teal-800">release record</span>
+          <span class="artifact-tag bg-teal-100 text-teal-800">runbooks</span>
+          <span class="artifact-tag bg-teal-100 text-teal-800">dashboards</span>
+          <span class="artifact-tag bg-teal-100 text-teal-800">incident record</span>
+          <span class="artifact-tag bg-teal-100 text-teal-800">decommission record</span>
+        </div>
+        <div class="text-lg text-[var(--muted-foreground)] mt-2">📁 Lưu tại: <code>docs/09-release/</code>, <code>docs/10-operations/</code>, <code>docs/11-decommissioning/</code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 10: DOCUMENT FLOW ========== -->
+  <div class="slide" id="s10">
+    <div class="p-8">
+      <div class="flex items-center gap-3 mb-4">
+        <h2 class="text-3xl font-bold" style="color: #006BB9;">📋 Dòng chảy tài liệu — Toàn bộ Agentic SDLC</h2>
+      </div>
+      <p class="text-[var(--muted-foreground)] text-xl mb-4">Mỗi bước tạo ra artifact → artifact đó là đầu vào cho bước sau → chuỗi commit = audit trail</p>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 overflow-x-auto">
+        <table class="w-full text-lg">
+          <thead>
+            <tr class="border-b border-[var(--border)]">
+              <th class="text-left py-2.5 pr-3 font-semibold" style="color:#006BB9;">Phase</th>
+              <th class="text-left py-2.5 pr-3 font-semibold">Tài liệu (theo thứ tự)</th>
+              <th class="text-left py-2.5 pr-3 font-semibold">Chuẩn / Prompt</th>
+              <th class="text-left py-2.5 font-semibold">Người duyệt</th>
+            </tr>
+          </thead>
+          <tbody class="text-[var(--muted-foreground)]">
+            <tr class="border-b border-[var(--border)]">
+              <td class="py-2.5 pr-3 font-medium text-[var(--foreground)]">1. Intake</td>
+              <td class="py-2.5 pr-3"><code>intent.md</code> → <code>glossary.md</code> → <code>stakeholders.md</code> → <code>sources.md</code></td>
+              <td class="py-2.5 pr-3">AI-native SDLC model</td>
+              <td class="py-2.5">PO</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="py-2.5 pr-3 font-medium text-[var(--foreground)]">2. Requirements</td>
+              <td class="py-2.5 pr-3"><code>BRD.md</code></td>
+              <td class="py-2.5 pr-3">IEEE 29148 · BRD prompts</td>
+              <td class="py-2.5">PM/PO</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="py-2.5 pr-3 font-medium text-[var(--foreground)]">3. Analysis</td>
+              <td class="py-2.5 pr-3"><code>SRS.md / PRD.md</code> → <code>USER_STORIES.md</code> → <code>traceability.md</code></td>
+              <td class="py-2.5 pr-3">IEEE 29148 · PRD prompts</td>
+              <td class="py-2.5">PM/PO + Tech Lead</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="py-2.5 pr-3 font-medium text-[var(--foreground)]">4. Design</td>
+              <td class="py-2.5 pr-3"><code>SAD.md</code> → <code>ADR-*.md</code> → <code>diagrams/</code> → <code>blueprint.md</code> → <code>openapi.yaml</code> → <code>data/model.md</code> → <code>UI_UX/</code></td>
+              <td class="py-2.5 pr-3">IEEE 1016 · ISO 42010 · UML 2.0 · 4+1 · C4</td>
+              <td class="py-2.5">Architect + Tech Lead</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="py-2.5 pr-3 font-medium text-[var(--foreground)]">5. Planning</td>
+              <td class="py-2.5 pr-3"><code>PLAN.md</code> → <code>tasks/*.md</code></td>
+              <td class="py-2.5 pr-3">—</td>
+              <td class="py-2.5">PM/PO + Tech Lead</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="py-2.5 pr-3 font-medium text-[var(--foreground)]">6. Build</td>
+              <td class="py-2.5 pr-3"><code>AGENTS.md</code> → <code>app/</code> → <code>tests/</code> → <code>traceability.md ↻</code></td>
+              <td class="py-2.5 pr-3">ISO 25010 · Conventional Commits</td>
+              <td class="py-2.5">Human owner</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="py-2.5 pr-3 font-medium text-[var(--foreground)]">7. Verify</td>
+              <td class="py-2.5 pr-3"><code>test-report</code> → <code>CI log</code> → <code>coverage</code></td>
+              <td class="py-2.5 pr-3">IEEE 829 · IEEE 29119 · testPlan prompt</td>
+              <td class="py-2.5">QA + Reviewer</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="py-2.5 pr-3 font-medium text-[var(--foreground)]">8. Review</td>
+              <td class="py-2.5 pr-3"><code>PR + review record</code> → <code>approval</code></td>
+              <td class="py-2.5 pr-3">IEEE 1028 · Code Review checklist</td>
+              <td class="py-2.5">Reviewer ≠ Author</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 pr-3 font-medium text-[var(--foreground)]">9–11. Release→Op→Retire</td>
+              <td class="py-2.5 pr-3"><code>release record</code> → <code>runbooks</code> → <code>incident record</code> → <code>decommission record</code></td>
+              <td class="py-2.5 pr-3">ISO 12207 · ISO 9001</td>
+              <td class="py-2.5">Release owner</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4 text-lg" style="color: #8B5E00;">
+        <b>⚠️ Luật bất biến:</b> Người/agent tạo nội dung ≠ người phê duyệt. Sau baseline, mọi thay đổi phải qua change control có bản ghi.
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 11: REFERENCES ========== -->
+  <div class="slide" id="s11">
+    <div class="p-8">
+      <div class="flex items-center gap-3 mb-4">
+        <h2 class="text-3xl font-bold" style="color: #006BB9;">📚 Nguồn tham khảo & Công cụ</h2>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <h3 class="font-semibold text-xl mb-3">🏗 Repo SDLC-Prompt-Checklist</h3>
+          <ul class="text-lg text-[var(--muted-foreground)] space-y-1.5">
+            <li>• <code>analysis/</code> — BRD, PRD prompts + IEEE 29148 checklist</li>
+            <li>• <code>design/</code> — SAD, Blueprint, UML, API, DB, UI/UX prompts + checklists</li>
+            <li>• <code>verification/</code> — Test plan prompt + IEEE 829 checklist</li>
+            <li>• <code>AI_SDLC-SOP.md</code> — Quy trình SOP đầy đủ</li>
+          </ul>
+        </div>
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <h3 class="font-semibold text-xl mb-3">📖 Chuẩn quốc tế</h3>
+          <ul class="text-lg text-[var(--muted-foreground)] space-y-1.5">
+            <li>• <b>ISO/IEC/IEEE 29148</b> — Requirements engineering</li>
+            <li>• <b>ISO/IEC 25010</b> — Quality attributes (NFR)</li>
+            <li>• <b>ISO/IEC/IEEE 42010</b> — Architecture description</li>
+            <li>• <b>IEEE 1016</b> — Software Design Description</li>
+            <li>• <b>IEEE 1028</b> — Software reviews & audits</li>
+            <li>• <b>IEEE 829 / 29119</b> — Test documentation</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <h3 class="font-semibold text-xl mb-3">🛠 Công cụ & Phương pháp</h3>
+          <ul class="text-lg text-[var(--muted-foreground)] space-y-1.5">
+            <li>• <b>arc42</b> — Template SAD 12 mục</li>
+            <li>• <b>Kruchten 4+1</b> — 5 view model</li>
+            <li>• <b>C4 model</b> — 4 mức trừu tượng</li>
+            <li>• <b>draw.io (diagrams.net)</b> — Sơ đồ kiến trúc dạng <code>.drawio</code></li>
+            <li>• <b>ADR (Nygard)</b> — Architecture Decision Records</li>
+            <li>• <b>ATAM-lite</b> — Đánh giá kiến trúc</li>
+          </ul>
+        </div>
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
+          <h3 class="font-semibold text-xl mb-3">🎯 Nguyên tắc then chốt</h3>
+          <ul class="text-lg text-[var(--muted-foreground)] space-y-1.5">
+            <li>• <b>Artifact = audit trail</b> — commit chain là bằng chứng</li>
+            <li>• <b>Agent tạo ≠ Agent/Người duyệt</b></li>
+            <li>• <b>Baseline trước, change control sau</b></li>
+            <li>• <b>Deterministic trước, LLM critic sau</b></li>
+            <li>• <b>Không có bằng chứng = chưa xong</b></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== NAVIGATION ========== -->
+  <div class="sticky bottom-0 bg-[var(--card)] border-t border-[var(--border)] px-4 py-3 flex items-center justify-between">
+    <button onclick="nav(-1)" class="px-5 py-2.5 rounded-lg text-lg font-medium border border-[var(--border)] hover:bg-[var(--accent)]" id="prevBtn">← Trước</button>
+    <div class="flex items-center gap-2" id="dots"></div>
+    <div class="text-lg text-[var(--muted-foreground)]" id="pageInfo"></div>
+    <button onclick="nav(1)" class="px-5 py-2.5 rounded-lg text-lg font-medium text-white" style="background:#006BB9;" id="nextBtn">Tiếp →</button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    let cur = 0;
+    const titles = [
+      'Bìa', 'Tổng quan', 'Phase 1: Intake', 'Phase 2: Requirements',
+      'Phase 3: Analysis', 'Phase 4: Design', 'Phase 5: Planning',
+      'Phase 6: Build', 'Phase 7-8: Verify & Review', 'Phase 9-11: Release·Op·Retire',
+      'Dòng chảy tài liệu', 'Tham khảo'
+    ];
+
+    const dotsEl = document.getElementById('dots');
+    titles.forEach((t, i) => {
+      const d = document.createElement('div');
+      d.className = 'nav-dot border border-[var(--border)]';
+      d.title = t;
+      d.onclick = () => go(i);
+      dotsEl.appendChild(d);
+    });
+
+    function go(i) {
+      slides[cur].classList.remove('active');
+      cur = Math.max(0, Math.min(i, slides.length - 1));
+      slides[cur].classList.add('active');
+      document.getElementById('pageInfo').textContent = `${cur + 1} / ${slides.length}`;
+      document.querySelectorAll('.nav-dot').forEach((d, j) => {
+        d.classList.toggle('active-dot', j === cur);
+        d.style.background = j === cur ? '#006BB9' : 'var(--card)';
+      });
+      document.getElementById('prevBtn').disabled = cur === 0;
+      document.getElementById('nextBtn').disabled = cur === slides.length - 1;
+    }
+    function nav(dir) { go(cur + dir); }
+    go(0);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === ' ') nav(1);
+      if (e.key === 'ArrowLeft') nav(-1);
+    });
+  </script>
+</body>
+</html>
