@@ -1,6 +1,7 @@
 # Traceability — Yêu cầu ↔ Code ↔ Test
 
 > Cập nhật sau mỗi lát cắt (Phase 6, bước REFINE). Mã AC theo PRD §3. Đường dẫn code tính từ gốc repo.
+> Ca kiểm thử đầy đủ cho mọi AC (kể cả chưa làm/bị chặn): [Master Test Plan §4.3](../06-verification/Master_Test_Plan.md). Kết quả chạy: [Test_Report_Slice1.md](../06-verification/Test_Report_Slice1.md).
 > **Cập nhật lần cuối:** 2026-10-23 — Lát cắt 1 (upload → xử lý → hỏi → trả lời có trích dẫn).
 
 ## Trạng thái theo user story
@@ -40,3 +41,4 @@
 | Ngày | Lát cắt | Ghi chú |
 |---|---|---|
 | 2026-10-23 | 1 — Walking skeleton | SQLite tạm (ADR-006), adapter AI giả lập; backend 33 test, độ phủ 95%; frontend 11 test; E2E thủ công qua trình duyệt |
+| 2026-10-23 | Phase 7 — Kiểm chứng lát cắt 1 | Master Test Plan (70 ca: 26 đạt, 7 một phần, 20 chờ task, 17 bị chặn); L0 xanh tại `163a7dd`; L1: 0 Blocker/Critical, 3 Medium (TSR-CWD-001 §5) |
