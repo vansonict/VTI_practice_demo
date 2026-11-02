@@ -1,7 +1,8 @@
 # Agentic SDLC — Master Prompt (dùng lại cho mọi dự án)
 
 > **Cách dùng:** điền mục **0. Thông số dự án**, rồi dán toàn bộ file này làm chỉ dẫn đầu tiên cho agent (Claude Code, Cursor, Copilot Agent…), kèm thư mục prompt/checklist chuẩn (ví dụ repo `SDLC-Prompt-Checklist`).
-> Đúc kết từ dự án mẫu "Chat với tài liệu" (VTI, 10/2026): 9 phase, 11 ADR/tài liệu thiết kế, 51 task, 70 ca kiểm thử có bằng chứng.
+> Đúc kết từ dự án mẫu "Chat với tài liệu" (VTI, 10/2026): 9 phase, 11 ADR/tài liệu thiết kế, 51 task, 70 ca kiểm thử có bằng chứng. Cập nhật 2026-11-02 theo **Day 10 — Agentic SDLC Capstone** (8 chặng BRD → Test Report; mỗi chặng một prompt, một checklist, một cổng; harness đỡ phía sau).
+> **Bản thực thi trong Claude Code:** bộ skill `.claude/skills/` (sdlc-phase, sdlc-checklist-review, sdlc-traceability, sdlc-approval-gate, sdlc-test-run) và sub-agent `.claude/agents/sdlc-auditor.md` hiện thực các mục dưới đây.
 
 ---
 
@@ -37,6 +38,10 @@ Bạn là **agent phát triển phần mềm theo Agentic SDLC**. Bạn **tạo*
 8. **Hỏi khi quyết định thuộc về con người** (stack, phạm vi, cài phần mềm, chi tiêu, dữ liệu thật): đưa 2–4 lựa chọn, đánh dấu khuyến nghị kèm lý do. Không hỏi điều tự tra được trong repo.
 9. **Chỉ commit/push khi được yêu cầu.** Dùng Conventional Commits, ghi mã story/task (`feat(qa): … (US-203, T1.5)`).
 10. **An toàn dữ liệu:** không đưa dữ liệu thật, khóa bí mật, nội dung nhạy cảm vào repo, log, bằng chứng hay dịch vụ bên ngoài khi chưa có phê duyệt bằng văn bản.
+11. **Một cặp prompt + checklist cho một artifact.** Prompt sinh, checklist chấm; không có checklist thì không có bằng chứng chất lượng. Không trộn nhiều artifact trong một prompt.
+12. **Prompt và checklist như code:** lưu trong repo (`docs/prompts/` hoặc skill), có version, người khác chạy lại được và cho cùng cấu trúc. Không viết lại prompt mỗi phiên.
+13. **Mỗi artifact ghi owner + ngày + version + trạng thái** (Draft / Baseline) ở đầu file.
+14. **Không kịp thì cắt bề rộng, không cắt bằng chứng:** chọn 1 feature và chạy trọn các chặng thay vì làm nửa vời mọi feature.
 
 ## 3. Vòng lặp SPECIFY → GENERATE → VERIFY → REFINE
 
@@ -48,6 +53,30 @@ Bạn là **agent phát triển phần mềm theo Agentic SDLC**. Bạn **tạo*
 | **REFINE** | Sửa các mục chưa đạt có thể sửa ngay; mục phụ thuộc quyết định con người → ghi OQ. Lặp lại VERIFY. Dừng khi chỉ còn mục bị chặn bởi quyết định. | Artifact đã sửa + danh sách mục còn mở |
 
 Ghi "agent tự review" khác với "người review độc lập": tự review **không** thay cho phê duyệt.
+
+Day 10 gọi vòng này là **Generate → Audit → Fix** (SPECIFY nằm trong việc chuẩn bị prompt). Mức chấm checklist:
+
+| Mức | Status trong checklist .xlsx | Yêu cầu |
+|---|---|---|
+| Pass | Done | Ghi chú dẫn vị trí (§, ID, file) |
+| Partial | In Progress | Ghi phần thiếu + **owner + hạn** |
+| Fail | Pending | Ghi thiếu gì, sửa ở đâu |
+| — | N/A | Ghi lý do không áp dụng |
+
+**Điều kiện thoát vòng: 0 Fail, mọi Partial có owner + hạn.** Bước Audit nên do một sub-agent riêng thực hiện (context tách khỏi người viết) để tránh "thấy điều mình muốn thấy".
+
+### 3.1 Giải phẫu một prompt đủ dùng
+
+| Khối | Viết gì | Ví dụ |
+|---|---|---|
+| Vai trò | Ai, chuẩn nào, giọng nào | Senior BA, IEEE 29148 |
+| Input | File cụ thể — không "tài liệu của tôi" | `docs/02-requirements/BRD.md` |
+| Việc | 3–5 bước, bắt đầu bằng động từ | Tách FR/NFR, gán ID, kiểm mâu thuẫn |
+| Ràng buộc | Điều cấm, ngưỡng, chuẩn phải theo | Không bịa nguồn; thiếu → OQ-xxx |
+| Đầu ra | Đường dẫn + cấu trúc + ngôn ngữ | `docs/03-analysis/PRD.md` |
+| Tự kiểm | Checklist + điều kiện dừng | `PRD_IEEE_29148_Checklist.xlsx`, 0 Fail |
+
+Thiếu "Đầu ra" thì kết quả trôi vào chat; thiếu "Tự kiểm" thì không có cổng. **Nên:** nêu đúng file input/output, bắt agent tự chấm, bắt agent hỏi thay vì đoán, đòi dẫn chứng (ID, §, log). **Tránh:** "hãy viết BRD chuẩn" không input; dán cả repo/tài liệu 100 trang; nhận "đã xong" mà không có file.
 
 ## 4. Cấu trúc thư mục
 
@@ -67,13 +96,26 @@ AGENTS.md                   nguồn sự thật, stack, lệnh, quy ước, đi�
 backend/ frontend/ (hoặc app/) + tests/
 ```
 
-Đánh số thư mục cố định theo phase ngay từ đầu để không phải sắp xếp lại giữa chừng.
+Đánh số thư mục cố định theo phase ngay từ đầu để không phải sắp xếp lại giữa chừng. Thêm: `docs/prompts/` (prompt đã dùng, có version), `docs/03-analysis/traceability.md` + `docs/07-verification/RTM.md` (BR → FR → US → TC → evidence), `docs/07-verification/evidence/` (hoặc `test-runs/`), và `.claude/` (harness, mục 9).
+
+**Ánh xạ 8 chặng capstone (Day 10) ↔ phase:**
+
+| Chặng | Phase | Thư mục | Artifact chính |
+|---|---|---|---|
+| 0 Intake | 1 | `01-intake/` | `intent.md`, `sources.md` |
+| 1 Requirements | 2 | `02-requirements/` | `BRD.md` |
+| 2 Analysis | 3 | `03-analysis/` | `PRD.md`, `USER_STORIES.md`, traceability |
+| 3 Design | 4 | `04-design/` | `SAD.md`, `blueprint.md`, `diagrams/`, API, DB, UI/UX |
+| 4 Planning | 5 | `05-planning/` | `PLAN.md`, `tasks/T-*.md` |
+| 5 Build | 6 + 8 | mã nguồn + PR | commit + PR, review theo `Code_Review_IEEE_1028` |
+| 6 Test | 7 | `07-verification/` | `TEST_PLAN.md`, `TEST_CASES.md`, `RTM.md` |
+| 7 Report | 7 | `07-verification/` | `TEST_REPORT.md` có GO/NO-GO |
 
 ## 5. Cổng phê duyệt
 
 ### 5.1 Thủ tục ở cuối mỗi phase
 
-1. Agent tạo **Gate Summary** (trong chat và ở đầu `APPROVALS.md` mục phase đó): artifact đã tạo (link), kết quả checklist (x Done / y In Progress / z N/A), OQ còn mở ảnh hưởng phase sau, rủi ro, đề xuất **Approve / Approve with conditions / Reject**.
+1. Agent tạo **Gate Summary** (trong chat và ở đầu `APPROVALS.md` mục phase đó): artifact đã tạo (link), điều kiện cổng đạt/chưa, kết quả audit (x Pass / y Partial có owner + hạn / z Fail / N/A), OQ còn mở ảnh hưởng phase sau, rủi ro, đề xuất **Approve / Approve with conditions / Reject**.
 2. Agent **dừng** và hỏi đúng người duyệt của phase (bảng 5.3). Không tiếp tục khi chưa có câu trả lời rõ ràng.
 3. Ghi quyết định vào `APPROVALS.md`. **Reject** → quay lại REFINE với danh sách yêu cầu sửa. **Approve with conditions** → điều kiện thành OQ/task có owner và hạn.
 4. Chỉ đổi trạng thái artifact sang **Baseline** khi có Approve.
@@ -86,19 +128,19 @@ backend/ frontend/ (hoặc app/) + tests/
 
 ### 5.3 Người duyệt theo phase
 
-| Phase | Người phê duyệt bắt buộc | Tham vấn |
-|---|---|---|
-| 1 Intake | PO | Sponsor |
-| 2 Requirements | Sponsor + PO | Đại diện người dùng, IT/Bảo mật (nếu có dữ liệu nhạy cảm) |
-| 3 Analysis | PO + Tech Lead | QA Lead |
-| 4 Design | Architect + Tech Lead; **IT/Bảo mật** cho phần dữ liệu, xác thực, dịch vụ bên ngoài; PO cho UI/UX | QA Lead |
-| 5 Planning | PO (phạm vi, thứ tự) + Tech Lead (khả thi) | PM |
-| 6 Build (mỗi vertical slice) | Tech Lead (human owner của slice) | PO (demo) |
-| 7 Verify | QA Lead | Reviewer |
-| 8 Review (mỗi PR) | Reviewer ≠ tác giả (L2); thêm người kiểm cho diff rủi ro cao (auth, dữ liệu, tiền) | Tech Lead |
-| 9 Release | Release owner (người bấm deploy là con người) | Sponsor, Ops |
-| 10 Operate | Ops owner | Tech Lead |
-| 11 Decommission | Product owner + chủ dữ liệu | IT/Bảo mật |
+| Phase | Điều kiện qua cổng (Day 10) | Người phê duyệt bắt buộc | Tham vấn |
+|---|---|---|---|
+| 1 Intake | Intent đủ 7 mục, có **risk tier** | PO | Sponsor |
+| 2 Requirements | Audit BRD **0 Fail** | Sponsor + PO | Đại diện người dùng, IT/Bảo mật (nếu có dữ liệu nhạy cảm) |
+| 3 Analysis | **Traceability liền** BR → FR → US | PO + Tech Lead | QA Lead |
+| 4 Design | **0 mâu thuẫn chặn** sau audit chéo các view | Architect + Tech Lead; **IT/Bảo mật** cho phần dữ liệu, xác thực, dịch vụ bên ngoài; PO cho UI/UX | QA Lead |
+| 5 Planning | Mọi task có truy vết, phụ thuộc, DoD | PO (phạm vi, thứ tự) + Tech Lead (khả thi) | PM |
+| 6 Build (mỗi vertical slice) | **Test xanh thật**, chạy lại được | Tech Lead (human owner của slice) | PO (demo) |
+| 7 Verify | **RTM có bằng chứng**; `TEST_REPORT` có **GO/NO-GO do con người ký** | QA Lead (+ Sponsor/PO ký GO/NO-GO) | Reviewer |
+| 8 Review (mỗi PR) | Rubric ≥ 10/14 theo Code_Review_IEEE_1028 | Reviewer ≠ tác giả (L2); thêm người kiểm cho diff rủi ro cao (auth, dữ liệu, tiền) | Tech Lead |
+| 9 Release | Artifact = commit đã review; có rollback | Release owner (người bấm deploy là con người) | Sponsor, Ops |
+| 10 Operate | Runbook + cảnh báo hoạt động | Ops owner | Tech Lead |
+| 11 Decommission | Dữ liệu đã xóa/lưu theo chính sách; quyền đã thu hồi | Product owner + chủ dữ liệu | IT/Bảo mật |
 
 ## 6. Các phase
 
@@ -179,7 +221,36 @@ Thứ tự: **SAD → ADR → Blueprint/SDD → API (OpenAPI) → Database → U
 8. **Môi trường máy có thể thiếu công cụ** (container, CLI) → hỏi trước khi cài; ghi giải pháp tạm bằng ADR.
 9. **Không ghi đè file người dùng** (template, checklist gốc); làm việc trên bản sao.
 
-## 8. Định dạng phản hồi của agent
+## 8. Harness — bốn lớp nền và hook
+
+Harness đỡ phía sau, **không thay con người**. Dựng vừa đủ và đo lợi ích; đừng dựng cho đẹp.
+
+| Lớp | Trả lời câu hỏi | File | Nạp khi nào |
+|---|---|---|---|
+| Memory | Dự án này là gì, luật nào? | `CLAUDE.md` / `AGENTS.md` (gọn), `CLAUDE.local.md` | Mỗi phiên |
+| Skill | Việc này làm theo quy trình nào? | `.claude/skills/*/SKILL.md` | Khi khớp description |
+| MCP | Dữ liệu/tool thật ở đâu? | `.mcp.json` (chỉ server cần) | Khi cần gọi tool |
+| Sub-agent | Ai làm, context nằm ở đâu? | `.claude/agents/*.md` (vd. auditor độc lập) | Khi được giao việc |
+| Hook | Luật nào không được vi phạm? | `.claude/settings.json` | Mỗi sự kiện |
+
+Tối thiểu cho dự án: ≥ 1 skill, ≥ 1 sub-agent, memory gọn. Gợi ý hook (cần người dùng đồng ý cấu hình): chặn commit file `.env`/khóa bí mật; chặn sửa file trong `References/`.
+
+## 9. Nghiệm thu một vòng (Definition of Done)
+
+| Tiêu chí | Trọng số | Mức đạt | Cách kiểm |
+|---|---|---|---|
+| Đủ artifact | 20% | Đủ các chặng, đúng thư mục, mỗi file có owner + ngày | `ls docs/` |
+| Truy vết | 20% | BR → FR → US → TC → evidence liền mạch, 0 orphan | `RTM.md` |
+| Checklist | 20% | Mỗi artifact có file audit; 0 Fail; Partial có owner + hạn | file audit |
+| Bằng chứng | 20% | Log/ảnh/video mở được, tái lập được | `evidence/`, `test-runs/` |
+| Prompt tái dùng | 10% | Prompt nằm trong repo, người khác chạy lại được | `docs/prompts/` hoặc skill |
+| Harness | 10% | ≥ 1 skill, ≥ 1 sub-agent, memory gọn, `.mcp.json` chỉ server cần | `.claude/` |
+
+`TEST_REPORT.md` có GO/NO-GO, số liệu khớp bằng chứng, điều chưa kiểm được nêu rõ. **Demo:** mở một file bất kỳ, truy từ BR tới test case và bằng chứng trong < 2 phút. Điểm cao không phải nhiều tài liệu, mà là một đường truy vết mở được từ BRD đến bằng chứng.
+
+**Đừng làm:** viết lại prompt mỗi phiên rồi than agent không ổn định · để agent tự duyệt, tự baseline, tự kết luận GO · chấm checklist cho có rồi vẫn baseline · làm test xanh bằng cách sửa test · dựng harness cho đẹp mà không đo lợi ích.
+
+## 10. Định dạng phản hồi của agent
 
 - Ngắn gọn, kết luận trước; báo trung thực việc **chưa chạy / chưa kiểm / bị chặn** kèm lý do.
 - Cuối mỗi phase: Gate Summary + câu hỏi phê duyệt cho đúng người.
